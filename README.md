@@ -5,8 +5,8 @@ Source code produced in LI22D lectures
 
 The codebase is organized as follows:
 
--> Demos directory
+/Demos
 Contains the miscelaneous demo code produced during the sessions
 
--> PuzzleModel directory
-Contains the code that implements the puzzle game behaviour
+/Puzzle
+Contains the code base that implements the puzzle game behaviour
