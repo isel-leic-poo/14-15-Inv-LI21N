@@ -33,7 +33,9 @@ public class MovesStack {
 	 */
 	public MovesStack(int capacity)
 	{
-		// TODO:
+		if(capacity <= 0)
+			throw new IllegalArgumentException();
+		
 		moves = new Move[capacity];
 		size = putIndex = 0;
 	}
@@ -47,6 +49,7 @@ public class MovesStack {
 	public void push(Move move)
 	{
 		// TODO
+		size += 1;
 	}
 	
 	/**
@@ -58,6 +61,7 @@ public class MovesStack {
 	public Move pop()
 	{
 		// TODO
+		size -= 1;
 		return null;
 	}
 	
@@ -69,6 +73,9 @@ public class MovesStack {
 	 */
 	public Move top()
 	{
+		if(isEmpty())
+			return null;
+		
 		// TODO
 		return null;
 	}
@@ -80,8 +87,7 @@ public class MovesStack {
 	 */
 	public boolean isEmpty()
 	{
-		// TODO
-		return false;
+		return getSize() == 0;
 	}
 	
 	/**
@@ -91,7 +97,6 @@ public class MovesStack {
 	 */
 	public int getSize()
 	{
-		// TODO
-		return 0;
+		return size;
 	}	
 }
