@@ -6,6 +6,9 @@ package poo.demos.puzzle.model;
  * MoveStack instances have limited capacity, specified upon construction.
  * When the instance's capacity is reached, oldest moves are replaced by new
  * ones. The goal is therefore to store the last N moves. 
+ * 
+ * Each instance supports, at most, 2^31 pushes between pops without overflowing 
+ * the put index. This is more than enough for realistic use-cases.
  */
 public class MovesStack {
 
@@ -48,8 +51,11 @@ public class MovesStack {
 	 */
 	public void push(Move move)
 	{
-		// TODO
-		size += 1;
+		if(move == null)
+			throw new IllegalArgumentException();
+		
+		moves[putIndex++ % moves.length] = move;
+		size = size != moves.length ? size + 1 : size;
 	}
 	
 	/**
@@ -60,9 +66,20 @@ public class MovesStack {
 	 */
 	public Move pop()
 	{
-		// TODO
+		if(isEmpty())
+			throw new IllegalStateException();
+		
+		int lastElementeIndex = (putIndex - 1) % moves.length; 
+
+		Move move = moves[lastElementeIndex];
+		// Ensuring that the Move instance is not inappropriately retained 
+		moves[lastElementeIndex] = null;
+
+		// Removing an element always creates an empty space
+		putIndex -= 1;
 		size -= 1;
-		return null;
+		
+		return move;
 	}
 	
 	/**
@@ -73,11 +90,7 @@ public class MovesStack {
 	 */
 	public Move top()
 	{
-		if(isEmpty())
-			return null;
-		
-		// TODO
-		return null;
+		return isEmpty() ? null : moves[(putIndex - 1) % moves.length];
 	}
 
 	/**
