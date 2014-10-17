@@ -46,6 +46,4 @@ public class PenApp {
 		writeWithPen(cheapHasHell, "Se é barato, não é bom");		
 		System.out.println(cheapHasHell);
 	}
-
-	
 }
