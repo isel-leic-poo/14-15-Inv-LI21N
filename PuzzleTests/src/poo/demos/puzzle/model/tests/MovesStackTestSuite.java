@@ -5,8 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import poo.demos.puzzle.model.Delta;
 import poo.demos.puzzle.model.Move;
 import poo.demos.puzzle.model.MovesStack;
+import poo.demos.puzzle.model.Piece;
 
 public class MovesStackTestSuite {
 
@@ -14,12 +16,53 @@ public class MovesStackTestSuite {
 	private static final int ZERO_STACK_CAPACITY = 0;
 	private static final int SMALL_STACK_CAPACITY = 5;
 	
+	/**
+	 * Holds the reference to the instance used in a test. Each test 
+	 * receives a freshly instantiated stack.
+	 * 
+	 * {@see #instantiateSmallCapacityEmptyStack()}
+	 */
 	private MovesStack stack;
+	
+	/**
+	 * Holds the reference to a {@link Move} instance used in a test. Each test 
+	 * receives a freshly instantiated stack.
+	 * 
+	 * {@see #instantiateSmallCapacityEmptyStack()}
+	 */
+	private Move aMove;
+	
+	/**
+	 * Helper method that creates a new {@link Move} instance, thus isolating the tests
+	 * from the construction specificities.
+	 * 
+	 * @return A newly instantiated {@link Move} object
+	 */
+	private Move createAMove()
+	{
+		return new Move(Delta.STEP_UP, new Piece());
+	}
+	
+	/**
+	 * Helper method that fills the moves' stack and produces the array with the 
+	 * pushed {@link Move} instances.
+	 * 
+	 * @return The pushed instances
+	 */
+	private Move[] fillStack() 
+	{
+		Move[] moves = new Move[SMALL_STACK_CAPACITY];
+		for(int idx = 0; idx < moves.length; ++idx)
+			stack.push(moves[idx] = createAMove());
+		
+		return moves;
+	}
 	
 	@Before
 	public void instantiateSmallCapacityEmptyStack()
 	{
 		stack = new MovesStack(SMALL_STACK_CAPACITY);
+		aMove = createAMove();
 	}
 
 	@Test(expected=IllegalArgumentException.class)
@@ -43,7 +86,7 @@ public class MovesStackTestSuite {
 	@Test
 	public void isEmpty_onAnNonEmptyStack_returnsFalse() 
 	{
-		stack.push(new Move());
+		stack.push(aMove);
 		assertFalse("Stack should not be empty", stack.isEmpty());
 	}	
 
@@ -57,7 +100,7 @@ public class MovesStackTestSuite {
 	public void getSize_onAnNonEmptyStack_returnsTheCorrectCount() 
 	{
 		final int PUSHED_COUNT = 1;
-		stack.push(new Move());
+		stack.push(aMove);
 		assertEquals("Stack size is incorrect", PUSHED_COUNT, stack.getSize());
 	}
 	
@@ -76,9 +119,8 @@ public class MovesStackTestSuite {
 	@Test
 	public void top_onANonEmptyStack_returnsLastPushedElement()
 	{
-		Move move = new Move(); 
-		stack.push(move);
-		assertSame("Should have obtained the last pushed element", move, stack.top());
+		stack.push(aMove);
+		assertSame("Should have obtained the last pushed element", aMove, stack.top());
 	}
 
 	@Test(expected=IllegalStateException.class)
@@ -90,9 +132,8 @@ public class MovesStackTestSuite {
 	@Test
 	public void pop_onANonEmptyStack_returnsLastPushedElement()
 	{
-		Move move = new Move(); 
-		stack.push(move);
-		assertSame("Should have obtained the last pushed element", move, stack.pop());
+		stack.push(aMove);
+		assertSame("Should have obtained the last pushed element", aMove, stack.pop());
 	}
 	
 	@Test
@@ -101,21 +142,12 @@ public class MovesStackTestSuite {
 		// Arrange
 		Move[] pushedMoves = fillStack();
 		// Act
-		Move lastPushedMove = new Move();
+		Move lastPushedMove = aMove;
 		stack.push(lastPushedMove);
 		// Assert
 		assertSame("Should have obtained the last pushed element", lastPushedMove, stack.pop());
 		for(int idx = pushedMoves.length - 1; idx != 0; --idx)
 			assertSame("Should have obtained the last pushed element", pushedMoves[idx], stack.pop());
 		assertTrue("By now, the stack should be empty", stack.isEmpty());
-	}
-
-	private Move[] fillStack() 
-	{
-		Move[] moves = new Move[SMALL_STACK_CAPACITY];
-		for(int idx = 0; idx < moves.length; ++idx)
-			stack.push(moves[idx] = new Move());
-		
-		return moves;
 	}
 }
