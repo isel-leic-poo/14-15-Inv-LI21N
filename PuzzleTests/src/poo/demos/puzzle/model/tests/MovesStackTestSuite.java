@@ -40,7 +40,7 @@ public class MovesStackTestSuite {
 	 */
 	private Move createAMove()
 	{
-		return new Move(Delta.STEP_UP, new Piece());
+		return new Move(Delta.STEP_DOWN, new Piece(0,0));
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package poo.demos.rubish;
+package poo.demos.rubish.pens;
 
 public class ErasablePen extends Pen {
 
