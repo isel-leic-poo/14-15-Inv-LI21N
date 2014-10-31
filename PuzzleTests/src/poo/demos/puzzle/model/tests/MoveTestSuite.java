@@ -3,6 +3,7 @@ package poo.demos.puzzle.model.tests;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import poo.demos.puzzle.model.Move;
@@ -30,6 +31,14 @@ import poo.demos.puzzle.model.Delta;
  */
 public class MoveTestSuite {
 	
+	private Piece piece;
+	
+	@Before
+	public void initPieceInstance()
+	{
+		piece = new Piece(0,0);
+	}
+	
 	@Test
 	public void deltaGetReverse_correctReverseComputation_returnsReverse()
 	{
@@ -42,7 +51,6 @@ public class MoveTestSuite {
 	@Test
 	public void instantiation_validConstructorArguments_noExceptionThrownAndFieldsAreCorrect() 
 	{
-		Piece piece = new Piece();
 		Move move = new Move(Delta.STEP_UP, piece);
 		assertThat(move.delta, is(sameInstance(Delta.STEP_UP)));
 		assertThat(move.target, is(sameInstance(piece)));
@@ -57,15 +65,14 @@ public class MoveTestSuite {
 	@Test(expected = IllegalArgumentException.class)
 	public void instantiation_nullDeltaInConstructorArgument_exceptionThrown() 
 	{
-		new Move(null, new Piece());
+		new Move(null, piece);
 	}
 
 	@Test
 	public void equals_equivalentMoves_returnsTrue()
 	{
-		Piece targetPiece = new Piece();
-		Move one = new Move(Delta.STEP_UP, targetPiece);
-		Move other = new Move(Delta.STEP_UP, targetPiece);
+		Move one = new Move(Delta.STEP_UP, piece);
+		Move other = new Move(Delta.STEP_UP, piece);
 		assertThat(one, is(equalTo(other)));
 		assertThat(other, is(equalTo(one)));
 	}
@@ -73,31 +80,30 @@ public class MoveTestSuite {
 	@Test
 	public void hashCode_equivalentMoves_returnsSameValue()
 	{
-		Piece targetPiece = new Piece();
-		Move one = new Move(Delta.STEP_UP, targetPiece);
-		Move other = new Move(Delta.STEP_UP, targetPiece);
+		Move one = new Move(Delta.STEP_UP, piece);
+		Move other = new Move(Delta.STEP_UP, piece);
 		assertThat(one.hashCode(), is(equalTo(other.hashCode())));
 	}
 	
 	@Test
 	public void equals_nullArgument_returnsFalse()
 	{
-		Move move = new Move(Delta.STEP_UP, new Piece());
+		Move move = new Move(Delta.STEP_UP, piece);
 		assertThat(move, is(not(equalTo(null))));
 	}
 	
 	@Test
 	public void equals_sameMove_returnsTrue()
 	{
-		Move move = new Move(Delta.STEP_UP, new Piece());
+		Move move = new Move(Delta.STEP_UP, piece);
 		assertThat(move, is(equalTo(move)));
 	}
 	
 	@Test
 	public void equals_differentMoves_returnsFalse()
 	{
-		Move one = new Move(Delta.STEP_DOWN, new Piece());
-		Move other = new Move(Delta.STEP_UP, new Piece());
+		Move one = new Move(Delta.STEP_DOWN, piece);
+		Move other = new Move(Delta.STEP_UP, piece);
 		assertThat(one, is(not(equalTo(other))));
 		assertThat(other, is(not(equalTo(one))));
 	}
@@ -105,55 +111,32 @@ public class MoveTestSuite {
 	@Test
 	public void getReverseMove_reverseUp_returnsDown() 
 	{
-		Piece targetPiece = new Piece();
-		Move move = new Move(Delta.STEP_UP, targetPiece);
-		Move expectedReverseMove = new Move(Delta.STEP_DOWN, targetPiece);
+		Move move = new Move(Delta.STEP_UP, piece);
+		Move expectedReverseMove = new Move(Delta.STEP_DOWN, piece);
 		assertThat(move.getReverseMove(), is(equalTo(expectedReverseMove)));
 	}
 
 	@Test
 	public void getReverseMove_reverseDown_returnsUp() 
 	{
-		Piece targetPiece = new Piece();
-		Move move = new Move(Delta.STEP_DOWN, targetPiece);
-		Move expectedReverseMove = new Move(Delta.STEP_UP, targetPiece);
+		Move move = new Move(Delta.STEP_DOWN, piece);
+		Move expectedReverseMove = new Move(Delta.STEP_UP, piece);
 		assertThat(move.getReverseMove(), is(equalTo(expectedReverseMove)));
 	}
 
 	@Test
 	public void getReverseMove_reverseLeft_returnsRight() 
 	{
-		Piece targetPiece = new Piece();
-		Move move = new Move(Delta.STEP_LEFT, targetPiece);
-		Move expectedReverseMove = new Move(Delta.STEP_RIGHT, targetPiece);
+		Move move = new Move(Delta.STEP_LEFT, piece);
+		Move expectedReverseMove = new Move(Delta.STEP_RIGHT, piece);
 		assertThat(move.getReverseMove(), is(equalTo(expectedReverseMove)));
 	}
 
 	@Test
 	public void getReverseMove_reverseRight_returnsLeft() 
 	{
-		Piece targetPiece = new Piece();
-		Move move = new Move(Delta.STEP_RIGHT, targetPiece);
-		Move expectedReverseMove = new Move(Delta.STEP_LEFT, targetPiece);
+		Move move = new Move(Delta.STEP_RIGHT, piece);
+		Move expectedReverseMove = new Move(Delta.STEP_LEFT, piece);
 		assertThat(move.getReverseMove(), is(equalTo(expectedReverseMove)));
-	}
-	
-	@Test
-	public void getInstanceFromCoordinates_withAllDirectionsCoordinates_returnsCorrectInstances()
-	{
-		assertThat(Delta.getInstanceFromCoordinates(0, 1), is(sameInstance(Delta.STEP_DOWN)));
-		assertThat(Delta.getInstanceFromCoordinates(0, -1), is(sameInstance(Delta.STEP_UP)));
-		assertThat(Delta.getInstanceFromCoordinates(1, 0), is(sameInstance(Delta.STEP_RIGHT)));
-		assertThat(Delta.getInstanceFromCoordinates(-1, 0), is(sameInstance(Delta.STEP_LEFT)));
-	}
-	
-	@Test
-	public void getInstanceFromCoordinates_withInvalidDirectionsCoordinates_returnsNull()
-	{
-		assertThat(Delta.getInstanceFromCoordinates(0, 0), is(nullValue()));
-		assertThat(Delta.getInstanceFromCoordinates(1, 1), is(nullValue()));
-		assertThat(Delta.getInstanceFromCoordinates(1, -1), is(nullValue()));
-		assertThat(Delta.getInstanceFromCoordinates(-1, -1), is(nullValue()));
-		assertThat(Delta.getInstanceFromCoordinates(-1, 1), is(nullValue()));
-	}
+	}	
 }
