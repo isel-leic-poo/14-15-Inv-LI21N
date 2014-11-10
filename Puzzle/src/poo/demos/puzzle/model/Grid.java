@@ -1,17 +1,19 @@
 package poo.demos.puzzle.model;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Class whose instances represent puzzle grids.
  * For the sake of simplification, grids always have a squared shape. 
  */
-public class Grid {
+public class Grid implements Iterable<Piece> {
 	
 	/**
 	 * Holds the two-dimensional array that holds the puzzle's pieces. 
 	 */
-	private final Piece[][] grid;
+	private final ModifiablePiece[][] grid;
 	
 	/**
 	 * Holds the current position of the grid's empty space. 
@@ -24,7 +26,7 @@ public class Grid {
 	private int size;
 	
 	/**
-	 * Helper method that produces an array of {@link Piece} instances to be used
+	 * Helper method that produces an array of {@link ModifiablePiece} instances to be used
 	 * in the grid.
 	 * 
 	 * @param size the size of the puzzle's side. The size of the puzzle must be, at least,
@@ -34,20 +36,20 @@ public class Grid {
 	 * @return The array of {@link MutablePiece} instances to be used
 	 * to initialize the grid.
 	 */
-	private static Piece[] createMutablePieces(int size)
+	private static ModifiablePiece[] createMutablePieces(int size)
 	{
 		if(size <= 1)
 			throw new IllegalArgumentException();
 		
 		// Initialize placeholder
-		Piece[] pieces = new Piece[size * size - 1];
+		ModifiablePiece[] pieces = new ModifiablePiece[size * size - 1];
 		
 		// Initialize pieces
 		for(int idx = 0; idx < pieces.length; ++idx)
 		{
 			int initialX = idx % size;
 			int initialY = idx / size;
-			pieces[idx] = new Piece(initialX, initialY);
+			pieces[idx] = new ModifiablePiece(initialX, initialY);
 		}
 
 		return pieces;
@@ -62,7 +64,7 @@ public class Grid {
 	private Grid(int size)
 	{
 		this.size = size;
-		grid = new Piece[size][size];
+		grid = new ModifiablePiece[size][size];
 		emptySpacePosition = Position.fromCoordinates(size-1, size-1);
 	}
 
@@ -95,7 +97,7 @@ public class Grid {
 			return false;
 		
 		emptySpacePosition = piece.getPosition();
-		Piece targetPiece = grid[piece.getPosition().Y][piece.getPosition().X];
+		ModifiablePiece targetPiece = grid[piece.getPosition().Y][piece.getPosition().X];
 		grid[emptySpacePosition.Y][emptySpacePosition.X] = null;
 		targetPiece.moveTo(destination);
 		grid[piece.getPosition().Y][piece.getPosition().X] = targetPiece;
@@ -117,7 +119,7 @@ public class Grid {
 	public static Grid createRandomPuzzle(int size)
 	{
 		// Initialize placeholder
-		Piece[] pieces = createMutablePieces(size);
+		ModifiablePiece[] pieces = createMutablePieces(size);
 		
 		// Initialize grid 
 		Grid instance = new Grid(size);
@@ -126,7 +128,7 @@ public class Grid {
 		{
 			// Select a piece
 			int selectedIdx = (int) (Math.random() * (pieces.length - idx));
-			Piece selectedPiece = pieces[selectedIdx];
+			ModifiablePiece selectedPiece = pieces[selectedIdx];
 			pieces[selectedIdx] = pieces[pieces.length - idx - 1];
 			
 			// Place it
@@ -150,7 +152,7 @@ public class Grid {
 	public static Grid createPuzzle(int size)
 	{
 		// Initialize placeholder
-		Piece[] pieces = createMutablePieces(size);
+		ModifiablePiece[] pieces = createMutablePieces(size);
 		
 		// Initialize grid 
 		Grid instance = new Grid(size);
@@ -180,7 +182,7 @@ public class Grid {
 		for(Piece piece : pieces)
 		{
 			Position pos = piece.getPosition();
-			instance.grid[pos.Y][pos.X] = new Piece(pos);
+			instance.grid[pos.Y][pos.X] = new ModifiablePiece(pos);
 		}
 		
 		instance.emptySpacePosition = emptyPosition;
@@ -196,15 +198,16 @@ public class Grid {
 	 * @return the piece at the given position, or {@code null} if that position 
 	 * is empty
 	 * @throws IllegalArgumentException if the given position is not within the 
-	 * grid's bounds 
+	 * grid's bounds, or {@code null} 
 	 */
 	public Piece getPieceAtPosition(Position position)
 	{
-		if(!isPositionWithinBounds(position))
+		if(position == null || !isPositionWithinBounds(position))
 			throw new IllegalArgumentException();
 		
-		// Note to students: Producing the original piece. Is this a problem?  
-		return grid[position.Y][position.X];
+		// Producing an unmodifiable instance, for the sake of encapsulation
+		ModifiablePiece original = grid[position.Y][position.X];
+		return original == null ? null : new UnmodifiablePiece(original);
 	}
 
 	/**
@@ -252,9 +255,13 @@ public class Grid {
 	 * @return {@code true} if the piece has been moved, {@code false} if the piece 
 	 * cannot be moved, that is, it is not adjacent to the empty space or if the 
 	 * specified position is occupied.
+	 * @throws IllegalArgumentException if either argument is {@code null}
 	 */
 	public boolean doMove(Piece piece, Position destination)
 	{
+		if(piece == null || destination == null)
+			throw new IllegalArgumentException();
+		
 		if(!isPositionWithinBounds(destination) || !destination.equals(emptySpacePosition))
 			return false;
 		
@@ -268,9 +275,49 @@ public class Grid {
 	 * @param piece The piece to be moved
 	 * @return {@code true} if the piece has been moved, {@code false} if the piece 
 	 * cannot be moved, that is, it is not adjacent to the empty space.
+	 * @throws IllegalArgumentException if the argument is {@code null}
 	 */
 	public boolean doMove(Piece piece)
 	{
+		if(piece == null)
+			throw new IllegalArgumentException();
+
 		return doMoveInternal(piece, emptySpacePosition);
+	}
+
+	/**
+	 * {@see Iterable#iterator()}
+	 */
+	@Override
+	public Iterator<Piece> iterator() 
+	{
+		return new Iterator<Piece>() {
+
+			private final int emptyIndex = emptySpacePosition.X + size * emptySpacePosition.Y;
+			private final int SIZE = size * size;
+			private int current = emptyIndex == 0 ? 1 : 0;
+			
+			@Override
+			public boolean hasNext() 
+			{
+				return current != SIZE;
+			}
+
+			@Override
+			public Piece next() 
+			{
+				if(!hasNext())
+					throw new NoSuchElementException();
+				
+				int idx = current++;
+				if(current == emptyIndex)
+					current += 1;
+				
+				return grid[idx / size][idx % size];
+			}
+
+			@Override
+			public void remove() { throw new UnsupportedOperationException(); }
+		};
 	}
 }

@@ -4,9 +4,11 @@ package poo.demos.puzzle.model;
  * Class whose immutable instances represent the puzzle positions. Coordinates are
  * expressed as non-negative rectangular coordinates.
  * 
- *	TODO: Consider the possibility of implementing a cache... 
+ * Instances are immutable and therefore they can be safely shared. To enable
+ * future implementations that resort to a cache, the class implements the 
+ * Factory Method pattern.
  */
-public class Position {
+ public class Position {
 	
 	/**
 	 * The horizontal coordinate.
@@ -34,6 +36,9 @@ public class Position {
 		Y = y;
 	}
 	
+	/**
+	 * {@see java.lang.Object#hashCode()}
+	 */
 	@Override
 	public int hashCode() 
 	{
@@ -43,10 +48,11 @@ public class Position {
 	/**
 	 * Checks if the instance is equivalent to the given one.
 	 * Two move instances are equivalent if their coordinates are the same. 
+	 * {@see java.lang.Object#equals(Object)}
 	 * 
 	 * @param other the other instance to use in the equivalence check
 	 * @return {@code true} if the current instance is equivalent to the given one,
-	 * {@code false} otherwise 
+	 * {@code false} otherwise
 	 */
 	@Override
 	public boolean equals(Object other) 
@@ -61,6 +67,9 @@ public class Position {
 		return this.X == otherPosition.X && this.Y == otherPosition.Y;
 	}
 
+	/**
+	 * {@see java.lang.Object#toString()}
+	 */
 	@Override
 	public String toString() 
 	{

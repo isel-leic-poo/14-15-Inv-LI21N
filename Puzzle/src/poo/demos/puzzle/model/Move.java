@@ -13,7 +13,7 @@ public class Move {
 	/**
 	 * The piece to which the move is to be applied.
 	 */
-	public final Piece target;
+	public final ModifiablePiece target;
 	
 	/**
 	 * Initiates an instance with the given arguments.
@@ -22,7 +22,7 @@ public class Move {
 	 * @param piece The piece to which the move is to be applied
 	 * @throws IllegalArgumentException if either argument is {@code null}
 	 */
-	public Move(Delta delta, Piece piece)
+	public Move(Delta delta, ModifiablePiece piece)
 	{
 		if(delta == null || piece == null)
 			throw new IllegalArgumentException();

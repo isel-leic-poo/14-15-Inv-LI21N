@@ -1,4 +1,4 @@
-package poo.demos.puzzle.model.tests;
+package poo.demos.puzzle.model;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import poo.demos.puzzle.model.Move;
-import poo.demos.puzzle.model.Piece;
+import poo.demos.puzzle.model.ModifiablePiece;
 import poo.demos.puzzle.model.Delta;
 
 /**
@@ -17,37 +17,17 @@ import poo.demos.puzzle.model.Delta;
  * 
  * For your own tests I recommend you use (for now) JUnit's assertions (e.g. assertSame,
  * assertEqual, assertTrue, and so on).
- * 
- * The next example illustrates the use of JUnit's assertions to express the 
- * deltaGetReverse_correctReverseComputation_returnsReverse unit test.
- * <pre> 
- * {@code
- * 		assertSame(Delta.DOWN, Delta.UP.getReverse());
- * 		assertSame(Delta.UP, Delta.DOWN.getReverse());
- * 		assertSame(Delta.LEFT, Delta.RIGHT.getReverse());
- * 		assertSame(Delta.RIGHT, Delta.LEFT.getReverse());
- * }
- * </pre>
  */
 public class MoveTestSuite {
 	
-	private Piece piece;
+	private ModifiablePiece piece;
 	
 	@Before
 	public void initPieceInstance()
 	{
-		piece = new Piece(0,0);
+		piece = new ModifiablePiece(0,0);
 	}
-	
-	@Test
-	public void deltaGetReverse_correctReverseComputation_returnsReverse()
-	{
-		assertThat(Delta.STEP_UP.getReverse(), is(sameInstance(Delta.STEP_DOWN)));
-		assertThat(Delta.STEP_DOWN.getReverse(), is(sameInstance(Delta.STEP_UP)));
-		assertThat(Delta.STEP_RIGHT.getReverse(), is(sameInstance(Delta.STEP_LEFT)));
-		assertThat(Delta.STEP_LEFT.getReverse(), is(sameInstance(Delta.STEP_RIGHT)));
-	}
-	
+		
 	@Test
 	public void instantiation_validConstructorArguments_noExceptionThrownAndFieldsAreCorrect() 
 	{

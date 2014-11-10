@@ -47,8 +47,7 @@ public enum Delta {
 			case STEP_UP: return STEP_DOWN;
 			case STEP_DOWN: return STEP_UP;
 			case STEP_LEFT: return STEP_RIGHT;
-			case STEP_RIGHT: return STEP_LEFT;
-			default: throw new InternalError();
+			default: return STEP_LEFT;
 		}
 	}
 	
