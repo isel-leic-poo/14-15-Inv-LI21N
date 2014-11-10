@@ -47,8 +47,7 @@ public enum Delta {
 			case STEP_UP: return STEP_DOWN;
 			case STEP_DOWN: return STEP_UP;
 			case STEP_LEFT: return STEP_RIGHT;
-			case STEP_RIGHT: return STEP_LEFT;
-			default: throw new InternalError();
+			default: return STEP_LEFT;
 		}
 	}
 	
@@ -56,19 +55,22 @@ public enum Delta {
 	 * Gets the instance that represents the given coordinates' variation, 
 	 * or null if none exists.
 	 * 
-	 * Note that the implementation does not ensure that a {@code null} value 
-	 * is always returned for invalid coordinates (a best effort approach).
-	 * It is the responsibility of the call site to ensure that the coordinates 
-	 * are within the represented range.
-	 * 
 	 * @param dX The horizontal variation
 	 * @param dY The vertical variation
-	 * @return The instance that represents the given variation 
+	 * @return The instance that represents the given variation, or {@code null} 
+	 * if none exists 
 	 */
 	public static Delta getInstanceFromCoordinates(int dX, int dY)
 	{
-		if(Math.abs(dX + dY) != 1) return null;
-		int index = Math.abs(dX) * 2 + Math.abs((dX + dY) - 1) / 2;
-		return index < 0 || index >= values().length ? null : values()[index];
+		// Is it a valid delta?
+		if(Math.abs(dX) + Math.abs(dY) != 1) 
+			return null;
+		
+		// Is it a vertical delta?
+		if(dX == 0)
+			return dY == -1 ? STEP_UP : STEP_DOWN;
+		
+		// It's an horizontal delta
+		return dX == -1 ? STEP_LEFT : STEP_RIGHT;
 	}
 }

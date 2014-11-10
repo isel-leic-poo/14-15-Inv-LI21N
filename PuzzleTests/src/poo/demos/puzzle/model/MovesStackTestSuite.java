@@ -1,4 +1,4 @@
-package poo.demos.puzzle.model.tests;
+package poo.demos.puzzle.model;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import org.junit.Test;
 import poo.demos.puzzle.model.Delta;
 import poo.demos.puzzle.model.Move;
 import poo.demos.puzzle.model.MovesStack;
-import poo.demos.puzzle.model.Piece;
+import poo.demos.puzzle.model.ModifiablePiece;
 
 public class MovesStackTestSuite {
 
@@ -40,7 +40,7 @@ public class MovesStackTestSuite {
 	 */
 	private Move createAMove()
 	{
-		return new Move(Delta.STEP_DOWN, new Piece(0,0));
+		return new Move(Delta.STEP_DOWN, new ModifiablePiece(0,0));
 	}
 	
 	/**

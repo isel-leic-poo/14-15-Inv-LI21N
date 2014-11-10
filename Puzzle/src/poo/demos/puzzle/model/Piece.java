@@ -1,107 +1,45 @@
 package poo.demos.puzzle.model;
 
 /**
- * Class whose instances represent puzzle pieces.
+ * Abstract class used to represent puzzle pieces.
  * 
  * Puzzle pieces have an initial position (which is considered the correct 
  * piece position) and a current position. Positions are represented as instances of
  * {@link Position}, which contain rectangular coordinates (i.e. x and y) that must 
  * be positive values (i.e. >= 0).
+ * 
+ * The {@link Piece} abstraction serves the purpose of increasing the solution's robustness 
+ * because it does not provide operations that mutate the state of the instance, and therefore it
+ * is appropriate to use it at the {@link Grid}'s public interface. 
+ * 
+ * <ul>
+ * There are two realizations of this abstractions: 
+ * <li> {@link ModifiablePiece} whose instances are used in the grid's implementation and that 
+ * support operations for modifying the piece's state, in particular its current position; </li>
+ * <li> {@link UnmodifiablePiece} which does not provide state modification operations and that 
+ * delegates the remaining operations to the underlying modifiable instance. </li>
+ * </ul> 
+ * 
+ * These realizations could be implemented as private nested classes of the {@link Grid} class because
+ * it is the only class who has any dependencies to them. This solution would lead to a significant 
+ * increase of the size of {@link Grid}'s source code, and therefore both realizations are instead 
+ * implemented as top level classes, with package visibility.      
  */
-public class Piece {
-
-	/**
-	 * The instance's initial position.
-	 */
-	private final Position initialPosition;
-	
-	/**
-	 * The instance's current position.
-	 */
-	private Position currentPosition;
-	
-	/**
-	 * Initiates an instance with the given coordinates.
-	 * 
-	 * @param x The horizontal coordinate value
-	 * @param y The vertical coordinate value
-	 * @throws IllegalArgumentException if either coordinate has a negative value
-	 */
-	public Piece(int x, int y)
-	{
-		this(Position.fromCoordinates(x, y));
-	}
-
-	/**
-	 * Initiates an instance with the given position.
-	 * 
-	 * @param position The instance's initial position
-	 */
-	public Piece(Position position)
-	{
-		this(position, position);
-	}
-	
-	/**
-	 * Initiates an instance with the given initial and current positions
-	 * 
-	 * @param initial the instance's initial position
-	 * @param current the instance's current position
-	 */
-	public Piece(Position initial, Position current)
-	{
-		initialPosition = initial;
-		currentPosition = current;
-	}
+public abstract class Piece {
 
 	/**
 	 * Gets the piece's initial position.
 	 * 
 	 * @return The instance's initial position
 	 */
-	public Position getInitialPosition() 
-	{
-		return initialPosition;
-	}
+	public abstract Position getInitialPosition(); 
 	
 	/**
 	 * Gets the piece's current position.
 	 * 
 	 * @return The instance's current position
 	 */
-	public Position getPosition() 
-	{
-		return currentPosition;
-	}
-	
-	/**
-	 * Moves the instance's to the given position.
-	 * 
-	 * @param newPosition the instance's new position
-	 */
-	public void moveTo(Position newPosition)
-	{
-		currentPosition = newPosition;
-	}
-	
-	/**
-	 * Moves the instance by the given distance.
-	 * 
-	 * @param delta the distance that the instance will move. 
-	 * @throws IllegalStateException if the resulting position is an illegal one,
-	 * that is, it has a negative value in one of its coordinates
-	 */
-	public void moveBy(Delta delta)
-	{
-		try {
-			currentPosition = Position.fromCoordinates(currentPosition.X + delta.X, currentPosition.Y + delta.Y);
-		}
-		catch(IllegalArgumentException invalidDelta)
-		{
-			// Convert exception to convey the correct semantics 
-			throw new IllegalStateException(invalidDelta);
-		}
-	}
+	public abstract Position getPosition(); 
 	
 	/**
 	 * Checks if the piece is at its correct (initial) position.
@@ -141,8 +79,8 @@ public class Piece {
 
 	/**
 	 * Checks if the instance is equivalent to the given one.
-	 * Two piece instances are equivalent if their coordinates (initial and current)
-	 * have the same values.  
+	 * Two piece instances are equivalent if they are of the same concrete type and if 
+	 * their coordinates (initial and current) have the same values.  
 	 * 
 	 * @param other the other instance to use in the equivalence check
 	 * @return {@code true} if the current instance is equivalent to the given one,
@@ -153,11 +91,11 @@ public class Piece {
 	@Override
 	public boolean equals(Object other) 
 	{
-		if(!(other instanceof Piece))
-			return false;
-		
 		if(this == other)
 			return true;
+		
+		if(other == null || !(other instanceof Piece))
+			return false;
 		
 		Piece otherPiece = (Piece) other;
 		return 	this.getInitialPosition().equals(otherPiece.getInitialPosition()) 
