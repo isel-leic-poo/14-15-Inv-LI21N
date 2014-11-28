@@ -3,22 +3,31 @@ package poo.demos.rubish.pens;
 public class Pen {
 	
 	protected final String color;
-	
 	protected int inkPercentage;
+	
+	public Pen(String color, int initialPercentage)
+	{
+		this.color = color;
+		inkPercentage = initialPercentage;
+	}
 	
 	public Pen(String color)
 	{
-		this.color = color;
-		inkPercentage = 100;
+		this(color, 100);
 	}
 	
-	public String write(String writing)
+	public Pen()
+	{
+		this("black", 100);
+	}
+
+	public String write(String writting)
 	{
 		if(inkPercentage == 0)
 			return "";
 		
 		inkPercentage -= 1;
-		return "In " + color + " -> " + writing;
+		return "In " + color + " -> " + writting;
 	}
 	
 	@Override

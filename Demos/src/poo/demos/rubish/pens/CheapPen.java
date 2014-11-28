@@ -2,11 +2,16 @@ package poo.demos.rubish.pens;
 
 public class CheapPen extends Pen {
 
-	public CheapPen(String color) 
+	public CheapPen(String color, int inkPercentage)
+	{
+		super(color, inkPercentage);
+	}
+	
+	public CheapPen(String color)
 	{
 		super(color);
 	}
-
+	
 	@Override
 	public String write(String message)
 	{

@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
-
 import poo.demos.puzzle.model.Delta;
 import poo.demos.puzzle.model.ModifiablePiece;
 import poo.demos.puzzle.model.Piece;
