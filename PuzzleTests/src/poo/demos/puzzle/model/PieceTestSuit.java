@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+
 import poo.demos.puzzle.model.Delta;
 import poo.demos.puzzle.model.ModifiablePiece;
 import poo.demos.puzzle.model.Piece;
@@ -22,7 +23,7 @@ public class PieceTestSuit {
 	{
 		ModifiablePiece original = new ModifiablePiece(X, Y);
 		Piece decorator = new UnmodifiablePiece(original);
-		assertThat(decorator, is(equalTo(original)));
+		assertThat(decorator, is(equalTo((Piece)original)));
 		assertThat(original, is(equalTo(decorator)));
 	}
 

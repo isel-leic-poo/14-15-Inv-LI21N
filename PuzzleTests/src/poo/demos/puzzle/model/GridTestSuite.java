@@ -2,6 +2,7 @@ package poo.demos.puzzle.model;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
+import static org.junit.matchers.JUnitMatchers.*;
 
 import java.util.HashSet;
 import java.util.Set;
