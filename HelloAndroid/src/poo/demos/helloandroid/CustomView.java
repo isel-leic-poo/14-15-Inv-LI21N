@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.os.IBinder;
 import android.view.View;
 
 public class CustomView extends View {
@@ -42,5 +43,15 @@ public class CustomView extends View {
 	{
 		this.flippedState = !this.flippedState;
 		invalidate();
+	}
+
+	public boolean getFlippedState() 
+	{
+		return flippedState;
+	}
+	
+	public void setFlippedState(boolean flippedState)
+	{
+		this.flippedState = flippedState;
 	}
 }

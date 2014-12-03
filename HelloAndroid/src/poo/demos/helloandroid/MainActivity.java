@@ -1,21 +1,26 @@
 package poo.demos.helloandroid;
 
-import java.util.logging.Logger;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+	private static final String MSG_BOX_STATE_KEY = "msgBoxText";
+	private static final String GAME_AREA_STATE_KEY = "gameAreaReversedState";
+
 	private TextView msgBox;
+	private CustomView gameArea;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -23,9 +28,11 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		msgBox = new TextView(this);
-		msgBox.setText("SLB, O Glorioso!!!");
 		msgBox.setTextSize(22);
-		msgBox.setVisibility(View.INVISIBLE);
+		String msgBoxText = "";
+		if(savedInstanceState != null)
+			msgBoxText = savedInstanceState.getString(MSG_BOX_STATE_KEY);
+		msgBox.setText(msgBoxText);
 		
 		Button button = new Button(this);
 		button.setText("Click Me");
@@ -33,18 +40,29 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View source) 
 			{
-				source.postDelayed(new Runnable() {
-					@Override
-					public void run() 
-					{
-						int newState = msgBox.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE;
-						msgBox.setVisibility(newState);
-					}
-				}, 1000);
+				final EditText textBox = new EditText(MainActivity.this);
+				new AlertDialog.Builder(MainActivity.this)
+					.setMessage("Player Name ?")
+					.setTitle("New entry")
+					.setView(textBox)
+					.setCancelable(false)
+					.setNegativeButton("Cancel", null)
+					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) 
+						{
+							final String text = textBox.getText().toString();
+							Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+							msgBox.setText(text);
+						}
+					}).create().show();
 			}
 		});
 		
-		CustomView gameArea = new CustomView(this);
+		gameArea = new CustomView(this);
+		if(savedInstanceState != null)
+			gameArea.setFlippedState(savedInstanceState.getBoolean(GAME_AREA_STATE_KEY));
+		
 		gameArea.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View source, MotionEvent event) 
@@ -88,5 +106,14 @@ public class MainActivity extends Activity {
 		root.addView(gameArea);
 		
 		setContentView(root);
+	}
+
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) 
+	{
+		super.onSaveInstanceState(outState);
+		outState.putString(MSG_BOX_STATE_KEY, msgBox.getText().toString());
+		outState.putBoolean(GAME_AREA_STATE_KEY, gameArea.getFlippedState());
 	}
 }
